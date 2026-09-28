@@ -25,7 +25,7 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState("search");
   const [searched, setSearched] = useState(false);
-  const [selectedFlight, setSelectedFlight] = useState(null);
+  const [selectedFlight, setSelectedFlight] = useState(null);\n  const [detailsOpen, setDetailsOpen] = useState(false);
   const [passenger, setPassenger] = useState(null);
   const [seat, setSeat] = useState(null);
   const [payment, setPayment] = useState(null);
