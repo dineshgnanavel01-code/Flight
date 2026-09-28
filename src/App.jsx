@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import LoadingScreen from "./components/LoadingScreen";
 import Navbar from "./components/Navbar";
 import FlightSearch from "./components/FlightSearch";
@@ -13,57 +13,105 @@ import BookingConfirmation from "./components/BookingConfirmation";
 export default function App() {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState("search");
+  const [searched, setSearched] = useState(false);
   const [selectedFlight, setSelectedFlight] = useState(null);
   const [passenger, setPassenger] = useState(null);
   const [seat, setSeat] = useState(null);
   const [payment, setPayment] = useState(null);
+  const [confirmed, setConfirmed] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 1200);
     return () => clearTimeout(timer);
   }, []);
 
-  const navigate = (nextPage) => {
-    setPage(nextPage);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+  const navigate = (nextPage) => setPage(nextPage);
+
+  const handleSearch = () => {
+    setSearched(true);
+    setPage("results");
+    setTimeout(() => document.getElementById("results")?.scrollIntoView({ behavior: "smooth" }), 50);
   };
 
-  const handleSearch = () => navigate("results");
-  const handleDetails = (flight) => { setSelectedFlight(flight); navigate("details"); };
-  const handleContinueBooking = (flight) => { if (flight) setSelectedFlight(flight); navigate("passenger"); };
-  const handlePassenger = (data) => { setPassenger(data); navigate("seats"); };
-  const handleSeat = (selectedSeat) => { setSeat(selectedSeat); navigate("payment"); };
-  const handlePayment = (paymentData) => { setPayment(paymentData); navigate("confirmation"); };
+  const handleDetails = (flight) => {
+    setSelectedFlight(flight);
+    setPage("details");
+    setTimeout(() => document.getElementById("details")?.scrollIntoView({ behavior: "smooth" }), 50);
+  };
+
+  const handlePassenger = (data) => {
+    setPassenger(data);
+    setPage("seats");
+    setTimeout(() => document.getElementById("seats")?.scrollIntoView({ behavior: "smooth" }), 50);
+  };
+
+  const handleSeat = (selectedSeat) => {
+    setSeat(selectedSeat);
+    setPage("payment");
+    setTimeout(() => document.getElementById("payment")?.scrollIntoView({ behavior: "smooth" }), 50);
+  };
+
+  const handlePayment = (data) => {
+    setPayment(data);
+    setConfirmed(true);
+    setPage("confirmation");
+    setTimeout(() => document.getElementById("confirmation")?.scrollIntoView({ behavior: "smooth" }), 50);
+  };
+
   const handleNewBooking = () => {
-    setSelectedFlight(null); setPassenger(null); setSeat(null); setPayment(null); navigate("search");
+    setSearched(false);
+    setSelectedFlight(null);
+    setPassenger(null);
+    setSeat(null);
+    setPayment(null);
+    setConfirmed(false);
+    setPage("search");
+    setTimeout(() => document.getElementById("search")?.scrollIntoView({ behavior: "smooth" }), 50);
   };
 
   if (loading) return <LoadingScreen />;
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-slate-950 text-white">
-      <Navbar page={page} selectedFlight={selectedFlight} onNavigate={navigate} />
-      <main className="min-h-screen pt-[72px]">
-        <AnimatePresence mode="wait">
-          {page === "search" && <PageTransition key="search" direction="up"><FlightSearch onSearch={handleSearch} /></PageTransition>}
-          {page === "results" && <PageTransition key="results" direction="right"><FlightResults onDetails={handleDetails} /></PageTransition>}
-          {page === "details" && selectedFlight && <PageTransition key="details" direction="right"><FlightDetails flight={selectedFlight} onClose={() => navigate("results")} onContinue={handleContinueBooking} /></PageTransition>}
-          {page === "passenger" && <PageTransition key="passenger" direction="right"><PassengerDetails flight={selectedFlight} onContinue={handlePassenger} onBack={() => navigate("details")} /></PageTransition>}
-          {page === "seats" && <PageTransition key="seats" direction="scale"><SeatSelection flight={selectedFlight} passenger={passenger} onContinue={handleSeat} onBack={() => navigate("passenger")} /></PageTransition>}
-          {page === "payment" && <PageTransition key="payment" direction="up"><Payment flight={selectedFlight} passenger={passenger} seat={seat} onPayment={handlePayment} /></PageTransition>}
-          {page === "confirmation" && <PageTransition key="confirmation" direction="scale"><BookingConfirmation flight={selectedFlight} passenger={passenger} seat={seat} payment={payment} onNewBooking={handleNewBooking} /></PageTransition>}
-        </AnimatePresence>
+      <Navbar page={page} selectedFlight={selectedFlight} searched={searched} confirmed={confirmed} onNavigate={navigate} />
+
+      <main className="pt-[72px]">
+        <section id="search" className="scroll-mt-24">
+          <FlightSearch onSearch={handleSearch} />
+        </section>
+
+        {searched && (
+          <section id="results" className="scroll-mt-24">
+            <FlightResults onDetails={handleDetails} />
+          </section>
+        )}
+
+        {selectedFlight && (
+          <>
+            <section id="details" className="scroll-mt-24">
+              <FlightDetails flight={selectedFlight} onClose={() => document.getElementById("results")?.scrollIntoView({ behavior: "smooth" })} onContinue={() => { setPage("passenger"); document.getElementById("passenger")?.scrollIntoView({ behavior: "smooth" }); }} />
+            </section>
+
+            <section id="passenger" className="scroll-mt-24">
+              <PassengerDetails flight={selectedFlight} onContinue={handlePassenger} onBack={() => document.getElementById("details")?.scrollIntoView({ behavior: "smooth" })} />
+            </section>
+
+            <section id="seats" className="scroll-mt-24">
+              <SeatSelection flight={selectedFlight} passenger={passenger} onContinue={handleSeat} onBack={() => document.getElementById("passenger")?.scrollIntoView({ behavior: "smooth" })} />
+            </section>
+
+            <section id="payment" className="scroll-mt-24">
+              <Payment flight={selectedFlight} passenger={passenger} seat={seat} onPayment={handlePayment} />
+            </section>
+
+            {confirmed && (
+              <section id="confirmation" className="scroll-mt-24">
+                <BookingConfirmation flight={selectedFlight} passenger={passenger} seat={seat} payment={payment} onNewBooking={handleNewBooking} />
+              </section>
+            )}
+          </>
+        )}
       </main>
     </div>
   );
-}
-
-function PageTransition({ children, direction }) {
-  const variants = {
-    up: { initial: { opacity: 0, y: 24 }, animate: { opacity: 1, y: 0 }, exit: { opacity: 0, y: -24 } },
-    right: { initial: { opacity: 0, x: 48 }, animate: { opacity: 1, x: 0 }, exit: { opacity: 0, x: -48 } },
-    scale: { initial: { opacity: 0, scale: 0.97 }, animate: { opacity: 1, scale: 1 }, exit: { opacity: 0, scale: 0.98 } },
-  };
-  const v = variants[direction];
-  return <motion.div initial={v.initial} animate={v.animate} exit={v.exit} transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1] }}>{children}</motion.div>;
 }
