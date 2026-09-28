@@ -15,7 +15,7 @@ export default function FlightDetails({
 
   return (
     <AnimatePresence>
-      {flight && (
+      {flight && isOpen && (
         <>
           <motion.div
             className="fixed inset-0 z-[90] bg-slate-950/40 backdrop-blur-md"
