@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
 import LoadingScreen from "./components/LoadingScreen";
 import Navbar from "./components/Navbar";
 import FlightSearch from "./components/FlightSearch";
