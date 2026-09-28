@@ -1,17 +1,36 @@
 import { useMemo } from "react";
 import { motion } from "framer-motion";
-import { Check, Download, Plane, Sparkles,ArrowRight,ShieldCheck, CalendarDays, Armchair,CreditCard,Clock3,MapPin,Ticket,} from "lucide-react";
+import {
+  Check,
+  Download,
+  Plane,
+  Sparkles,
+  ArrowRight,
+  ShieldCheck,
+  CalendarDays,
+  Armchair,
+  CreditCard,
+  Clock3,
+  MapPin,
+  Ticket,
+} from "lucide-react";
 
 export default function BookingConfirmation({
   flight,
   passenger,
   seat,
   payment,
+  travelDate,
   onNewBooking,
 }) {
+  // Generate booking reference once
   const bookingId = useMemo(() => {
     return `SB-${Math.floor(1000 + Math.random() * 9000)}-AX91`;
   }, []);
+
+  // -----------------------------------
+  // Flight Data
+  // -----------------------------------
 
   const departure = flight?.departure || "06:30";
   const arrival = flight?.arrival || "09:15";
@@ -19,18 +38,39 @@ export default function BookingConfirmation({
   const from = flight?.from || "DEL";
   const to = flight?.to || "BLR";
 
-  const fromCity = getCity(from);
-  const toCity = getCity(to);
+  const fromCity = flight?.fromCity || getCity(from);
+  const toCity = flight?.toCity || getCity(to);
 
   const duration = flight?.duration || "2h 45m";
   const stops = flight?.stops || "Non-stop";
+
+  const airline = flight?.airline || "IndiGo";
+  const flightCode = flight?.code || "6E";
+
+  // -----------------------------------
+  // Passenger Data
+  // -----------------------------------
 
   const passengerName =
     `${passenger?.firstName || ""} ${
       passenger?.lastName || ""
     }`.trim() || "Passenger";
 
-  const price = flight?.price || payment?.amount || 5499;
+  // -----------------------------------
+  // Price
+  // Payment amount takes priority
+  // if your payment page calculates
+  // the final amount.
+  // -----------------------------------
+
+  const rawPrice =
+    payment?.amount ?? flight?.price ?? 5499;
+
+  const price = Number(rawPrice) || 5499;
+
+  // -----------------------------------
+  // Payment Method
+  // -----------------------------------
 
   const paymentMethod =
     payment?.method === "upi"
@@ -39,9 +79,29 @@ export default function BookingConfirmation({
       ? "Cash"
       : "Card";
 
+  // -----------------------------------
+  // Travel Date
+  // -----------------------------------
+
+  const formattedTravelDate = formatTravelDate(
+    travelDate
+  );
+
+  // -----------------------------------
+  // Travel Class
+  // -----------------------------------
+
+  const travelClass =
+    flight?.travelClass ||
+    flight?.class ||
+    "Economy";
+
   return (
     <section className="relative min-h-screen overflow-hidden bg-[#faf7f2] px-4 py-10 text-slate-900 sm:py-16">
-    
+      {/* =========================================
+          BACKGROUND ANIMATION
+      ========================================= */}
+
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <motion.div
           className="absolute -left-32 -top-32 h-96 w-96 rounded-full bg-amber-300/30 blur-3xl"
@@ -101,7 +161,15 @@ export default function BookingConfirmation({
         ))}
       </div>
 
-      <div className="relative z-10 mx-auto max-w-full">
+      {/* =========================================
+          MAIN CONTENT
+      ========================================= */}
+
+      <div className="relative z-10 mx-auto w-full max-w-6xl">
+        {/* =======================================
+            SUCCESS HEADER
+        ======================================= */}
+
         <div className="text-center">
           <motion.div
             initial={{
@@ -131,7 +199,10 @@ export default function BookingConfirmation({
               }}
             />
 
-            <Check size={46} strokeWidth={3.2} />
+            <Check
+              size={46}
+              strokeWidth={3.2}
+            />
           </motion.div>
 
           <motion.div
@@ -184,8 +255,9 @@ export default function BookingConfirmation({
             }}
             className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-slate-500 sm:text-base"
           >
-            Everything is ready for your trip. Your seat has been
-            reserved and your booking reference has been generated.
+            Everything is ready for your trip. Your seat has
+            been reserved and your booking reference has been
+            generated.
           </motion.p>
 
           <motion.div
@@ -206,6 +278,11 @@ export default function BookingConfirmation({
             {passengerName}
           </motion.div>
         </div>
+
+        {/* =======================================
+            BOARDING PASS
+        ======================================= */}
+
         <motion.div
           initial={{
             opacity: 0,
@@ -225,16 +302,19 @@ export default function BookingConfirmation({
           className="mt-12"
         >
           <div className="overflow-hidden rounded-[2rem] border border-amber-100 bg-white shadow-[0_30px_80px_rgba(245,158,11,0.08)]">
-          
+            {/* =================================
+                TICKET HEADER
+            ================================= */}
+
             <div className="relative overflow-hidden bg-gradient-to-r from-slate-950 via-zinc-900 to-amber-950 px-6 py-7 text-white sm:px-10">
-              {/* Glow */}
               <div className="absolute -right-20 -top-24 h-64 w-64 rounded-full bg-amber-500/20 blur-3xl" />
+
               <div className="absolute -bottom-32 left-1/3 h-72 w-72 rounded-full bg-orange-600/20 blur-3xl" />
 
               <div className="relative flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                   <div className="flex items-center gap-3">
-                    <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-500/10 border border-amber-500/20 backdrop-blur-md">
+                    <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-amber-500/20 bg-amber-500/10 backdrop-blur-md">
                       <Plane
                         size={23}
                         className="text-amber-400"
@@ -277,6 +357,11 @@ export default function BookingConfirmation({
                 </div>
               </div>
             </div>
+
+            {/* =================================
+                BOOKING REFERENCE
+            ================================= */}
+
             <div className="flex flex-col gap-3 border-b border-dashed border-slate-200 px-6 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-10">
               <div>
                 <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
@@ -296,9 +381,15 @@ export default function BookingConfirmation({
                 Secure booking
               </div>
             </div>
+
+            {/* =================================
+                ROUTE
+            ================================= */}
+
             <div className="px-6 py-9 sm:px-10 sm:py-12">
               <div className="grid grid-cols-1 items-center gap-8 sm:grid-cols-[1fr_auto_1fr] sm:gap-6">
                 {/* FROM */}
+
                 <motion.div
                   initial={{
                     opacity: 0,
@@ -329,6 +420,8 @@ export default function BookingConfirmation({
                     {formatTime(departure)}
                   </p>
                 </motion.div>
+
+                {/* ROUTE LINE */}
 
                 <div className="hidden w-52 sm:block">
                   <div className="relative flex items-center">
@@ -372,7 +465,8 @@ export default function BookingConfirmation({
                   </div>
                 </div>
 
-                
+                {/* MOBILE ROUTE */}
+
                 <div className="flex items-center gap-4 sm:hidden">
                   <div className="h-px flex-1 bg-slate-200" />
 
@@ -387,6 +481,7 @@ export default function BookingConfirmation({
                 </div>
 
                 {/* TO */}
+
                 <motion.div
                   initial={{
                     opacity: 0,
@@ -420,33 +515,47 @@ export default function BookingConfirmation({
                 </motion.div>
               </div>
             </div>
+
+            {/* =================================
+                TICKET INFORMATION
+            ================================= */}
+
             <div className="border-t border-slate-100 bg-[#fffdfa] px-6 py-7 sm:px-10">
               <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
                 <TicketInfo
                   icon={<CalendarDays size={17} />}
                   title="Travel Date"
-                  value="28 Sep 2026"
-                  delay={1.25}/>
+                  value={formattedTravelDate}
+                  delay={1.25}
+                />
 
                 <TicketInfo
                   icon={<Armchair size={17} />}
                   title="Seat"
                   value={seat || "12A"}
-                  delay={1.3}/>
+                  delay={1.3}
+                />
 
                 <TicketInfo
                   icon={<Ticket size={17} />}
                   title="Class"
-                  value={flight?.travelClass || "Economy"}
-                  delay={1.35} />
+                  value={travelClass}
+                  delay={1.35}
+                />
 
                 <TicketInfo
                   icon={<CreditCard size={17} />}
                   title="Payment"
                   value={paymentMethod}
-                  delay={1.4} />
+                  delay={1.4}
+                />
               </div>
             </div>
+
+            {/* =================================
+                AMOUNT
+            ================================= */}
+
             <div className="flex flex-col gap-5 border-t border-slate-100 px-6 py-7 sm:flex-row sm:items-center sm:justify-between sm:px-10">
               <div>
                 <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">
@@ -469,11 +578,23 @@ export default function BookingConfirmation({
                 </p>
               </div>
             </div>
+
+            {/* =================================
+                TICKET CUT
+            ================================= */}
+
             <div className="relative h-5 bg-slate-50">
               <span className="absolute -left-3 top-1/2 h-7 w-7 -translate-y-1/2 rounded-full bg-[#faf7f2]" />
+
               <span className="absolute -right-3 top-1/2 h-7 w-7 -translate-y-1/2 rounded-full bg-[#faf7f2]" />
+
               <div className="mx-10 border-t border-dashed border-slate-200" />
             </div>
+
+            {/* =================================
+                AIRLINE INFORMATION
+            ================================= */}
+
             <div className="flex flex-col gap-4 bg-white px-6 py-6 sm:flex-row sm:items-center sm:justify-between sm:px-10">
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50">
@@ -489,7 +610,7 @@ export default function BookingConfirmation({
                   </p>
 
                   <p className="text-sm font-bold text-slate-700">
-                    {flight?.airline || "IndiGo"} • {flight?.code || "6E"}
+                    {airline} • {flightCode}
                   </p>
                 </div>
               </div>
@@ -500,6 +621,11 @@ export default function BookingConfirmation({
             </div>
           </div>
         </motion.div>
+
+        {/* =======================================
+            ACTION BUTTONS
+        ======================================= */}
+
         <motion.div
           initial={{
             opacity: 0,
@@ -514,6 +640,8 @@ export default function BookingConfirmation({
           }}
           className="mt-7 grid gap-3 sm:grid-cols-2"
         >
+          {/* DOWNLOAD */}
+
           <motion.button
             type="button"
             whileHover={{
@@ -530,8 +658,11 @@ export default function BookingConfirmation({
               size={19}
               className="transition-transform group-hover:-translate-y-0.5"
             />
+
             Download Ticket
           </motion.button>
+
+          {/* NEW BOOKING */}
 
           <motion.button
             type="button"
@@ -554,6 +685,10 @@ export default function BookingConfirmation({
           </motion.button>
         </motion.div>
 
+        {/* =======================================
+            FOOTER
+        ======================================= */}
+
         <motion.div
           initial={{
             opacity: 0,
@@ -571,6 +706,7 @@ export default function BookingConfirmation({
               size={15}
               className="text-amber-500"
             />
+
             Secure booking
           </span>
 
@@ -580,15 +716,18 @@ export default function BookingConfirmation({
 
           <span className="h-1 w-1 rounded-full bg-slate-300" />
 
-          <span>Have a wonderful journey ✈️</span>
+          <span>
+            Have a wonderful journey ✈️
+          </span>
         </motion.div>
       </div>
     </section>
   );
 }
 
-
-
+/* =========================================
+   TICKET INFO COMPONENT
+========================================= */
 
 function TicketInfo({
   icon,
@@ -613,6 +752,7 @@ function TicketInfo({
     >
       <div className="flex items-center gap-2 text-amber-600">
         {icon}
+
         <span className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">
           {title}
         </span>
@@ -625,7 +765,9 @@ function TicketInfo({
   );
 }
 
-
+/* =========================================
+   CITY LOOKUP
+========================================= */
 
 function getCity(code) {
   const cities = {
@@ -639,18 +781,24 @@ function getCity(code) {
     CCU: "Kolkata",
     PNQ: "Pune",
     COK: "Kochi",
+    AUH: "Abu Dhabi",
+    SIN: "Singapore",
+    DOH: "Doha",
+    NRT: "Tokyo",
   };
 
   return cities[code] || code;
 }
 
-
-
+/* =========================================
+   TIME FORMATTER
+========================================= */
 
 function formatTime(time) {
   if (!time) return "--";
 
-  const [hours, minutes] = time.split(":");
+  const [hours, minutes] = String(time).split(":");
+
   const hour = Number(hours);
 
   if (Number.isNaN(hour)) {
@@ -658,10 +806,41 @@ function formatTime(time) {
   }
 
   const suffix = hour >= 12 ? "PM" : "AM";
+
   const displayHour = hour % 12 || 12;
 
   return `${String(displayHour).padStart(
     2,
     "0"
-  )}:${minutes} ${suffix}`;
+  )}:${minutes || "00"} ${suffix}`;
+}
+
+/* =========================================
+   DATE FORMATTER
+========================================= */
+
+function formatTravelDate(date) {
+  if (!date) {
+    return "28 Sep 2026";
+  }
+
+  // Already formatted date
+  if (
+    typeof date === "string" &&
+    date.includes(" ")
+  ) {
+    return date;
+  }
+
+  const parsedDate = new Date(date);
+
+  if (Number.isNaN(parsedDate.getTime())) {
+    return String(date);
+  }
+
+  return parsedDate.toLocaleDateString("en-IN", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
 }

@@ -1,7 +1,5 @@
+import React, { useState } from "react";
 
-import { useEffect, useState } from "react";
-
-import LoadingScreen from "./components/LoadingScreen";
 import Navbar from "./components/Navbar";
 import FlightSearch from "./components/FlightSearch";
 import FlightResults from "./components/FlightResults";
@@ -12,338 +10,354 @@ import Payment from "./components/Payment";
 import BookingConfirmation from "./components/BookingConfirmation";
 
 export default function App() {
-  const [loading, setLoading] = useState(true);
+  const [step, setStep] = useState("search");
 
-  const [page, setPage] = useState("search");
-  const [searched, setSearched] = useState(false);
-
+  const [searchData, setSearchData] = useState(null);
   const [selectedFlight, setSelectedFlight] = useState(null);
   const [passenger, setPassenger] = useState(null);
-  const [seat, setSeat] = useState(null);
+  const [selectedSeat, setSelectedSeat] = useState(null);
   const [payment, setPayment] = useState(null);
 
-  const [confirmed, setConfirmed] = useState(false);
+  // =========================================================
+  // SEARCH FLIGHTS
+  // Search -> Results
+  // =========================================================
 
-  // --------------------------------------------------
-  // INITIAL LOADING
-  // --------------------------------------------------
+  const handleSearch = (data) => {
+    console.log("Search data:", data);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 1200);
+    setSearchData(data);
 
-    return () => clearTimeout(timer);
-  }, []);
+    // Clear previous booking data
+    setSelectedFlight(null);
+    setPassenger(null);
+    setSelectedSeat(null);
+    setPayment(null);
 
-  // --------------------------------------------------
-  // SCROLL
-  // --------------------------------------------------
+    // Go to flight results
+    setStep("results");
 
-  const scrollToSection = (id) => {
-    requestAnimationFrame(() => {
-      setTimeout(() => {
-        document.getElementById(id)?.scrollIntoView({
-          behavior: "smooth",
-          block: "start",
-        });
-      }, 50);
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
     });
   };
 
-  // --------------------------------------------------
-  // NAVBAR NAVIGATION
-  // --------------------------------------------------
-
-  const navigate = (nextPage) => {
-    // Results cannot be opened until search is completed
-    if (nextPage === "results" && !searched) {
-      scrollToSection("search");
-      return;
-    }
-
-    // Booking pages require selected flight
-    const bookingPages = [
-      "details",
-      "passenger",
-      "seats",
-      "payment",
-    ];
-
-    if (
-      bookingPages.includes(nextPage) &&
-      !selectedFlight
-    ) {
-      scrollToSection("search");
-      return;
-    }
-
-    setPage(nextPage);
-    scrollToSection(nextPage);
-  };
-
-  // --------------------------------------------------
-  // SEARCH
-  // --------------------------------------------------
-
-  const handleSearch = (searchData) => {
-    console.log("Search:", searchData);
-
-    setSearched(true);
-    setPage("results");
-
-    scrollToSection("results");
-  };
-
-  // --------------------------------------------------
+  // =========================================================
   // SELECT FLIGHT
-  // --------------------------------------------------
+  // Results -> Passenger Details
+  // =========================================================
 
-  const handleDetails = (flight) => {
+  const handleFlightSelect = (flight) => {
+    console.log("Selected flight:", flight);
+
     setSelectedFlight(flight);
-    setPage("details");
 
-    scrollToSection("details");
+    // Skip FlightDetails
+    setStep("passenger");
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
   };
 
-  // --------------------------------------------------
-  // CONTINUE TO PASSENGER
-  // --------------------------------------------------
+  // =========================================================
+  // PASSENGER DETAILS
+  // Passenger -> Seat Selection
+  // =========================================================
 
-  const handleContinueBooking = (flight) => {
-    if (flight) {
-      setSelectedFlight(flight);
+  const handlePassengerContinue = (data) => {
+    console.log("Passenger details:", data);
+
+    setPassenger(data);
+
+    setStep("seats");
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
+  // =========================================================
+  // SEAT SELECTION
+  // Seats -> Payment
+  // =========================================================
+
+  const handleSeatContinue = (seat) => {
+    console.log("Selected seat:", seat);
+
+    setSelectedSeat(seat);
+
+    setStep("payment");
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
+  // =========================================================
+  // PAYMENT
+  // Payment -> Confirmation
+  // =========================================================
+
+  const handlePaymentComplete = (paymentData) => {
+    console.log("Payment:", paymentData);
+
+    setPayment(paymentData);
+
+    setStep("confirmation");
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
+  // =========================================================
+  // NAVBAR STEP NAVIGATION
+  // =========================================================
+
+  const handleStepChange = (nextStep) => {
+    // -------------------------------------------------------
+    // Details is skipped
+    // -------------------------------------------------------
+
+    if (nextStep === "details") {
+      if (selectedFlight) {
+        setStep("passenger");
+      } else {
+        setStep("results");
+      }
+
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+
+      return;
     }
 
-    setPage("passenger");
+    // -------------------------------------------------------
+    // Passenger requires selected flight
+    // -------------------------------------------------------
 
-    scrollToSection("passenger");
+    if (nextStep === "passenger" && !selectedFlight) {
+      setStep("results");
+
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+
+      return;
+    }
+
+    // -------------------------------------------------------
+    // Seats requires passenger details
+    // -------------------------------------------------------
+
+    if (nextStep === "seats" && !passenger) {
+      setStep("passenger");
+
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+
+      return;
+    }
+
+    // -------------------------------------------------------
+    // Payment requires selected seat
+    // -------------------------------------------------------
+
+    if (nextStep === "payment" && !selectedSeat) {
+      setStep("seats");
+
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+
+      return;
+    }
+
+    // -------------------------------------------------------
+    // Confirmation requires payment
+    // -------------------------------------------------------
+
+    if (nextStep === "confirmation" && !payment) {
+      setStep("payment");
+
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+
+      return;
+    }
+
+    setStep(nextStep);
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
   };
 
-  // --------------------------------------------------
-  // PASSENGER
-  // --------------------------------------------------
-
-  const handlePassenger = (data) => {
-    setPassenger(data);
-    setPage("seats");
-
-    scrollToSection("seats");
-  };
-
-  // --------------------------------------------------
-  // SEAT
-  // --------------------------------------------------
-
-  const handleSeat = (selectedSeat) => {
-    setSeat(selectedSeat);
-    setPage("payment");
-
-    scrollToSection("payment");
-  };
-
-  // --------------------------------------------------
-  // PAYMENT
-  // --------------------------------------------------
-
-  const handlePayment = (paymentData) => {
-    setPayment(paymentData);
-    setConfirmed(true);
-    setPage("confirmation");
-
-    scrollToSection("confirmation");
-  };
-
-  // --------------------------------------------------
+  // =========================================================
   // NEW BOOKING
-  // --------------------------------------------------
+  // =========================================================
 
   const handleNewBooking = () => {
-    setSearched(false);
+    setStep("search");
+
+    setSearchData(null);
     setSelectedFlight(null);
     setPassenger(null);
-    setSeat(null);
+    setSelectedSeat(null);
     setPayment(null);
-    setConfirmed(false);
 
-    setPage("search");
-
-    scrollToSection("search");
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
   };
 
-  // --------------------------------------------------
-  // BACK BUTTONS
-  // --------------------------------------------------
-
-  const handleBackToResults = () => {
-    setPage("results");
-    scrollToSection("results");
-  };
-
-  const handleBackToDetails = () => {
-    setPage("details");
-    scrollToSection("details");
-  };
-
-  const handleBackToPassenger = () => {
-    setPage("passenger");
-    scrollToSection("passenger");
-  };
-
-  // --------------------------------------------------
-  // LOADING
-  // --------------------------------------------------
-
-  if (loading) {
-    return <LoadingScreen />;
-  }
-
-  // --------------------------------------------------
-  // UI
-  // --------------------------------------------------
+  // =========================================================
+  // APP UI
+  // =========================================================
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-slate-950 text-white">
+    <div className="min-h-screen w-full bg-slate-50 text-slate-900">
 
-      {/* ==================================================
-          GLOBAL NAVBAR
-      ================================================== */}
+      {/* =====================================================
+          NAVBAR
+      ===================================================== */}
 
       <Navbar
-        page={page}
-        selectedFlight={selectedFlight}
-        searched={searched}
-        confirmed={confirmed}
-        onNavigate={navigate}
+        step={step}
+        setStep={handleStepChange}
       />
 
-      {/* ==================================================
+      {/* =====================================================
           MAIN
-      ================================================== */}
+      ===================================================== */}
 
-      <main className="pt-[72px]">
+      <main className="w-full pt-[68px]">
 
-        {/* ==================================================
-            SEARCH
-        ================================================== */}
+        {/* ===================================================
+            1. FLIGHT SEARCH
+            NO EXTRA TEXT
+        =================================================== */}
 
-        <section
-          id="search"
-          className="scroll-mt-24"
-        >
-          <FlightSearch
-            onSearch={handleSearch}
-          />
-        </section>
-
-        {/* ==================================================
-            RESULTS
-        ================================================== */}
-
-        {searched && (
-          <section
-            id="results"
-            className="scroll-mt-24"
-          >
-            <FlightResults
-              onDetails={handleDetails}
+        {step === "search" && (
+          <section className="w-full min-h-[calc(100vh-68px)]">
+            <FlightSearch
+              onSearch={handleSearch}
             />
           </section>
         )}
 
-        {/* ==================================================
-            BOOKING FLOW
-        ================================================== */}
+        {/* ===================================================
+            2. FLIGHT RESULTS
+        =================================================== */}
 
-        {selectedFlight && (
-          <>
+        {step === "results" && (
+          <FlightResults
+            searchData={searchData}
+            onDetails={handleFlightSelect}
+          />
+        )}
 
-            {/* ----------------------------------------------
-                DETAILS
-            ---------------------------------------------- */}
+        {/* ===================================================
+            3. FLIGHT DETAILS
+            Normally skipped
+        =================================================== */}
 
-            <section
-              id="details"
-              className="scroll-mt-24"
-            >
-              <FlightDetails
-                flight={selectedFlight}
-                onClose={handleBackToResults}
-                onContinue={handleContinueBooking}
-              />
-            </section>
+        {step === "details" && (
+          <FlightDetails
+            flight={selectedFlight}
+            isOpen={true}
+            onClose={() => {
+              setStep("results");
 
-            {/* ----------------------------------------------
-                PASSENGER
-            ---------------------------------------------- */}
+              window.scrollTo({
+                top: 0,
+                behavior: "smooth",
+              });
+            }}
+            onContinue={() => {
+              setStep("passenger");
 
-            <section
-              id="passenger"
-              className="scroll-mt-24"
-            >
-              <PassengerDetails
-                flight={selectedFlight}
-                onContinue={handlePassenger}
-                onBack={handleBackToDetails}
-              />
-            </section>
+              window.scrollTo({
+                top: 0,
+                behavior: "smooth",
+              });
+            }}
+          />
+        )}
 
-            {/* ----------------------------------------------
-                SEATS
-            ---------------------------------------------- */}
+        {/* ===================================================
+            4. PASSENGER DETAILS
+        =================================================== */}
 
-            <section
-              id="seats"
-              className="scroll-mt-24"
-            >
-              <SeatSelection
-                flight={selectedFlight}
-                passenger={passenger}
-                onContinue={handleSeat}
-                onBack={handleBackToPassenger}
-              />
-            </section>
+        {step === "passenger" && selectedFlight && (
+          <PassengerDetails
+            flight={selectedFlight}
+            onContinue={handlePassengerContinue}
+          />
+        )}
 
-            {/* ----------------------------------------------
-                PAYMENT
-            ---------------------------------------------- */}
+        {/* ===================================================
+            5. SEAT SELECTION
+        =================================================== */}
 
-            <section
-              id="payment"
-              className="scroll-mt-24"
-            >
-              <Payment
-                flight={selectedFlight}
-                passenger={passenger}
-                seat={seat}
-                onPayment={handlePayment}
-              />
-            </section>
+        {step === "seats" &&
+          selectedFlight &&
+          passenger && (
+            <SeatSelection
+              flight={selectedFlight}
+              passenger={passenger}
+              onContinue={handleSeatContinue}
+            />
+          )}
 
-            {/* ----------------------------------------------
-                CONFIRMATION
-            ---------------------------------------------- */}
+        {/* ===================================================
+            6. PAYMENT
+        =================================================== */}
 
-            {confirmed && (
-              <section
-                id="confirmation"
-                className="scroll-mt-24"
-              >
-                <BookingConfirmation
-                  flight={selectedFlight}
-                  passenger={passenger}
-                  seat={seat}
-                  payment={payment}
-                  onNewBooking={handleNewBooking}
-                />
-              </section>
-            )}
+        {step === "payment" &&
+          selectedFlight &&
+          passenger &&
+          selectedSeat && (
+            <Payment
+              flight={selectedFlight}
+              passenger={passenger}
+              seat={selectedSeat}
+              onPaymentComplete={handlePaymentComplete}
+            />
+          )}
 
-          </>
+        {/* ===================================================
+            7. BOOKING CONFIRMATION
+        =================================================== */}
+
+        {step === "confirmation" && (
+          <BookingConfirmation
+            flight={selectedFlight}
+            passenger={passenger}
+            seat={selectedSeat}
+            payment={payment}
+            travelDate={searchData?.date}
+            onNewBooking={handleNewBooking}
+          />
         )}
 
       </main>
     </div>
   );
 }
-

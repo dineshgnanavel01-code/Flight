@@ -1,8 +1,21 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowRight, ArrowRightLeft, CalendarDays,Check,ChevronDown,Globe2,MapPin,Plane, Search,ShieldCheck, Sparkles, Users, Zap, Star,} from "lucide-react";
-
-
+import {
+  ArrowRight,
+  ArrowRightLeft,
+  CalendarDays,
+  Check,
+  ChevronDown,
+  Globe2,
+  MapPin,
+  Plane,
+  Search,
+  ShieldCheck,
+  Sparkles,
+  Users,
+  Zap,
+  Star,
+} from "lucide-react";
 
 const cities = [
   "Delhi",
@@ -22,28 +35,56 @@ const classes = [
   "First Class",
 ];
 
-const cityCodes = {
-  Delhi: "DEL",
-  Mumbai: "BOM",
-  Bangalore: "BLR",
-  Hyderabad: "HYD",
-  Chennai: "MAA",
-  Kolkata: "CCU",
-  Dubai: "DXB",
-  Singapore: "SIN",
+const cityInfo = {
+  Delhi: {
+    code: "DEL",
+    country: "India",
+    airport: "Indira Gandhi International Airport",
+    terminal: "T3",
+  },
+  Mumbai: {
+    code: "BOM",
+    country: "India",
+    airport: "Chhatrapati Shivaji Maharaj International Airport",
+    terminal: "T2",
+  },
+  Bangalore: {
+    code: "BLR",
+    country: "India",
+    airport: "Kempegowda International Airport",
+    terminal: "T2",
+  },
+  Hyderabad: {
+    code: "HYD",
+    country: "India",
+    airport: "Rajiv Gandhi International Airport",
+    terminal: "T1",
+  },
+  Chennai: {
+    code: "MAA",
+    country: "India",
+    airport: "Chennai International Airport",
+    terminal: "T1",
+  },
+  Kolkata: {
+    code: "CCU",
+    country: "India",
+    airport: "Netaji Subhas Chandra Bose International Airport",
+    terminal: "T2",
+  },
+  Dubai: {
+    code: "DXB",
+    country: "UAE",
+    airport: "Dubai International Airport",
+    terminal: "T3",
+  },
+  Singapore: {
+    code: "SIN",
+    country: "Singapore",
+    airport: "Singapore Changi Airport",
+    terminal: "T1",
+  },
 };
-
-const cityMeta = {
-  Delhi: "India",
-  Mumbai: "India",
-  Bangalore: "India",
-  Hyderabad: "India",
-  Chennai: "India",
-  Kolkata: "India",
-  Dubai: "UAE",
-  Singapore: "Singapore",
-};
-
 
 export default function FlightSearch({ onSearch }) {
   const [from, setFrom] = useState("Delhi");
@@ -54,7 +95,6 @@ export default function FlightSearch({ onSearch }) {
 
   const [passengerOpen, setPassengerOpen] = useState(false);
   const [classOpen, setClassOpen] = useState(false);
-
   const [fromOpen, setFromOpen] = useState(false);
   const [toOpen, setToOpen] = useState(false);
 
@@ -63,8 +103,6 @@ export default function FlightSearch({ onSearch }) {
   const [searching, setSearching] = useState(false);
 
   const today = new Date().toISOString().split("T")[0];
-
-
 
   const swapCities = () => {
     setFrom(to);
@@ -76,7 +114,6 @@ export default function FlightSearch({ onSearch }) {
       to: "",
     }));
   };
-
 
   const closeAllDropdowns = () => {
     setFromOpen(false);
@@ -123,11 +160,20 @@ export default function FlightSearch({ onSearch }) {
     onSearch?.({
       from,
       to,
+      fromCode: cityInfo[from].code,
+      toCode: cityInfo[to].code,
+      fromCountry: cityInfo[from].country,
+      toCountry: cityInfo[to].country,
+      fromAirport: cityInfo[from].airport,
+      toAirport: cityInfo[to].airport,
+      fromTerminal: cityInfo[from].terminal,
+      toTerminal: cityInfo[to].terminal,
       date,
       passengers,
       travelClass,
     });
   };
+
   const openDatePicker = () => {
     const input = document.getElementById("travel-date");
 
@@ -174,9 +220,8 @@ export default function FlightSearch({ onSearch }) {
   };
 
   return (
-    <section className="relative min-h-screen overflow-hidden bg-[#0d0f17] font-sans text-slate-100">
-      
-
+    <section className="relative min-h-screen w-full overflow-hidden bg-[#0d0f17] font-sans text-slate-100">
+      {/* BACKGROUND */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div
           className="absolute inset-0 bg-cover bg-center opacity-30 mix-blend-luminosity brightness-75"
@@ -214,9 +259,9 @@ export default function FlightSearch({ onSearch }) {
         />
       </div>
 
-      <div className="relative z-10 mx-auto max-w-full px-4 py-6 sm:px-6 lg:px-8">
-       
-
+      {/* FULL WIDTH CONTAINER */}
+      <div className="relative z-10 w-full px-4 py-6 sm:px-6 lg:px-8">
+        {/* HEADER */}
         <motion.header
           initial={{
             opacity: 0,
@@ -231,7 +276,7 @@ export default function FlightSearch({ onSearch }) {
           }}
           className="fixed left-0 right-0 top-0 z-[100] border-b border-amber-500/20 bg-[#0d0f17]/85 px-4 py-3 backdrop-blur-2xl sm:px-6 lg:px-8"
         >
-          <div className="mx-auto flex max-w-[1600px] items-center justify-between">
+          <div className="mx-auto flex max-w-full items-center justify-between">
             <div className="flex items-center gap-3">
               <motion.div
                 whileHover={{
@@ -287,9 +332,9 @@ export default function FlightSearch({ onSearch }) {
           </div>
         </motion.header>
 
-    
-
-        <div className="grid items-center gap-12 pb-10 pt-12 lg:grid-cols-[0.9fr_1.1fr] lg:pb-14 lg:pt-16">
+        {/* HERO */}
+        <div className="grid w-full items-center gap-12 pb-10 pt-20 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:pb-14 lg:pt-24">
+          {/* HERO CONTENT */}
           <motion.div
             initial={{
               opacity: 0,
@@ -321,7 +366,7 @@ export default function FlightSearch({ onSearch }) {
               </span>
             </motion.div>
 
-            <h1 className="mt-7 max-w-xl text-5xl font-black leading-[0.92] tracking-[-0.04em] text-white sm:text-6xl lg:text-7xl">
+            <h1 className="mt-7 max-w-2xl text-5xl font-black leading-[0.92] tracking-[-0.04em] text-white sm:text-6xl lg:text-7xl">
               The world is
 
               <span className="relative block bg-gradient-to-r from-amber-300 via-amber-400 to-orange-500 bg-clip-text text-transparent">
@@ -347,7 +392,7 @@ export default function FlightSearch({ onSearch }) {
               </span>
             </h1>
 
-            <p className="mt-7 max-w-lg text-sm font-normal leading-7 text-slate-300 sm:text-base">
+            <p className="mt-7 max-w-2xl text-sm leading-7 text-slate-300 sm:text-base">
               Find the perfect route, compare fares and build your journey in
               just a few clicks with hyper-speed precision.
             </p>
@@ -370,7 +415,7 @@ export default function FlightSearch({ onSearch }) {
             </div>
           </motion.div>
 
-
+          {/* GLOBE / ROUTE */}
           <motion.div
             initial={{
               opacity: 0,
@@ -387,7 +432,7 @@ export default function FlightSearch({ onSearch }) {
               type: "spring",
               stiffness: 70,
             }}
-            className="relative mx-auto h-[360px] w-full max-w-[620px]"
+            className="relative mx-auto h-[360px] w-full max-w-full"
           >
             <motion.div
               animate={{
@@ -447,11 +492,11 @@ export default function FlightSearch({ onSearch }) {
 
             <svg
               className="absolute inset-0 h-full w-full"
-              viewBox="0 0 620 360"
+              viewBox="0 0 760 360"
               fill="none"
             >
               <motion.path
-                d="M65 250 C170 40 410 50 555 215"
+                d="M65 250 C200 40 500 50 695 215"
                 stroke="#fbbf24"
                 strokeWidth="2"
                 strokeDasharray="8 9"
@@ -494,16 +539,20 @@ export default function FlightSearch({ onSearch }) {
             </motion.div>
 
             <Airport
-              code={cityCodes[from]}
+              code={cityInfo[from].code}
               city={from}
-              country={cityMeta[from]}
+              country={cityInfo[from].country}
+              airport={cityInfo[from].airport}
+              terminal={cityInfo[from].terminal}
               position="left"
             />
 
             <Airport
-              code={cityCodes[to]}
+              code={cityInfo[to].code}
               city={to}
-              country={cityMeta[to]}
+              country={cityInfo[to].country}
+              airport={cityInfo[to].airport}
+              terminal={cityInfo[to].terminal}
               position="right"
             />
 
@@ -520,10 +569,7 @@ export default function FlightSearch({ onSearch }) {
             >
               <div className="flex items-center gap-3">
                 <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-amber-500/30 bg-amber-500/20">
-                  <Plane
-                    size={16}
-                    className="text-amber-400"
-                  />
+                  <Plane size={16} className="text-amber-400" />
                 </div>
 
                 <div>
@@ -532,7 +578,7 @@ export default function FlightSearch({ onSearch }) {
                   </p>
 
                   <p className="text-sm font-black text-amber-300">
-                    {cityCodes[from]} → {cityCodes[to]}
+                    {cityInfo[from].code} → {cityInfo[to].code}
                   </p>
                 </div>
               </div>
@@ -540,8 +586,7 @@ export default function FlightSearch({ onSearch }) {
           </motion.div>
         </div>
 
-     
-
+        {/* SEARCH FORM - FULL WIDTH */}
         <motion.div
           initial={{
             opacity: 0,
@@ -555,15 +600,14 @@ export default function FlightSearch({ onSearch }) {
             delay: 0.35,
             duration: 0.8,
           }}
-          className="relative"
+          className="relative w-full"
         >
           <div className="absolute -left-3 top-1/2 z-20 hidden h-7 w-7 -translate-y-1/2 rounded-full border border-amber-500/20 bg-[#0d0f17] lg:block" />
 
           <div className="absolute -right-3 top-1/2 z-20 hidden h-7 w-7 -translate-y-1/2 rounded-full border border-amber-500/20 bg-[#0d0f17] lg:block" />
 
-          <div className="overflow-visible rounded-[2.5rem] border border-amber-500/20 bg-slate-900/90 shadow-[0_30px_100px_rgba(245,158,11,.12)] backdrop-blur-2xl">
-           
-
+          <div className="w-full overflow-visible rounded-[2.5rem] border border-amber-500/20 bg-slate-900/90 shadow-[0_30px_100px_rgba(245,158,11,.12)] backdrop-blur-2xl">
+            {/* SEARCH HEADER */}
             <div className="border-b border-dashed border-slate-800 px-5 py-5 sm:px-8">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
@@ -596,17 +640,16 @@ export default function FlightSearch({ onSearch }) {
               </div>
             </div>
 
-            <div className="p-4 sm:p-6 lg:p-7">
-        
-
-              <div className="grid gap-3 lg:grid-cols-[1fr_62px_1fr_1fr]">
+            <div className="w-full p-4 sm:p-6 lg:p-7">
+              {/* FROM / SWAP / TO / DATE */}
+              <div className="grid w-full gap-3 lg:grid-cols-[minmax(0,1fr)_62px_minmax(0,1fr)_minmax(0,1fr)]">
                 {/* FROM */}
-
-                <div className="relative">
+                <div className="relative min-w-0">
                   <SearchField
                     label="From"
-                    value={cityCodes[from]}
-                    subtitle={from}
+                    value={cityInfo[from].code}
+                    subtitle={`${from} · ${cityInfo[from].country}`}
+                    details={`${cityInfo[from].airport} · ${cityInfo[from].terminal}`}
                     icon={<MapPin size={17} />}
                     focused={focused === "from"}
                     error={errors.from}
@@ -629,7 +672,6 @@ export default function FlightSearch({ onSearch }) {
                 </div>
 
                 {/* SWAP */}
-
                 <div className="flex items-center justify-center">
                   <motion.button
                     type="button"
@@ -660,12 +702,12 @@ export default function FlightSearch({ onSearch }) {
                 </div>
 
                 {/* TO */}
-
-                <div className="relative">
+                <div className="relative min-w-0">
                   <SearchField
                     label="To"
-                    value={cityCodes[to]}
-                    subtitle={to}
+                    value={cityInfo[to].code}
+                    subtitle={`${to} · ${cityInfo[to].country}`}
+                    details={`${cityInfo[to].airport} · ${cityInfo[to].terminal}`}
                     icon={<MapPin size={17} />}
                     focused={focused === "to"}
                     error={errors.to}
@@ -688,7 +730,6 @@ export default function FlightSearch({ onSearch }) {
                 </div>
 
                 {/* DATE */}
-
                 <SearchField
                   label="Travel date"
                   value={
@@ -703,11 +744,8 @@ export default function FlightSearch({ onSearch }) {
                         )
                       : "Choose date"
                   }
-                  subtitle={
-                    date
-                      ? "Departure"
-                      : "Select your journey date"
-                  }
+                  subtitle={date ? "Departure date" : "Select your journey date"}
+                  details={date ? "One-way journey" : "Flexible travel planning"}
                   icon={<CalendarDays size={17} />}
                   focused={focused === "date"}
                   error={errors.date}
@@ -734,19 +772,16 @@ export default function FlightSearch({ onSearch }) {
                 </SearchField>
               </div>
 
-           
-
-              <div className="mt-3 grid gap-3 lg:grid-cols-[1fr_1fr_1.35fr]">
+              {/* PASSENGERS / CLASS / SEARCH */}
+              <div className="mt-3 grid w-full gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1.35fr)]">
                 {/* PASSENGERS */}
-
                 <DropdownField
                   icon={<Users size={17} />}
                   label="Travelers"
                   value={`${passengers} ${
-                    passengers === 1
-                      ? "Passenger"
-                      : "Passengers"
+                    passengers === 1 ? "Passenger" : "Passengers"
                   }`}
+                  detail="Maximum 9 travelers"
                   open={passengerOpen}
                   onClick={() => {
                     setPassengerOpen(!passengerOpen);
@@ -773,12 +808,7 @@ export default function FlightSearch({ onSearch }) {
                           <div className="flex items-center gap-3">
                             <CounterButton
                               onClick={() =>
-                                setPassengers(
-                                  Math.max(
-                                    1,
-                                    passengers - 1
-                                  )
-                                )
+                                setPassengers(Math.max(1, passengers - 1))
                               }
                             >
                               −
@@ -801,12 +831,7 @@ export default function FlightSearch({ onSearch }) {
 
                             <CounterButton
                               onClick={() =>
-                                setPassengers(
-                                  Math.min(
-                                    9,
-                                    passengers + 1
-                                  )
-                                )
+                                setPassengers(Math.min(9, passengers + 1))
                               }
                             >
                               +
@@ -819,10 +844,10 @@ export default function FlightSearch({ onSearch }) {
                 </DropdownField>
 
                 {/* CLASS */}
-
                 <DropdownField
                   label="Cabin class"
                   value={travelClass}
+                  detail="Select preferred cabin"
                   open={classOpen}
                   onClick={() => {
                     setClassOpen(!classOpen);
@@ -869,7 +894,7 @@ export default function FlightSearch({ onSearch }) {
                   </AnimatePresence>
                 </DropdownField>
 
-
+                {/* SEARCH BUTTON */}
                 <motion.button
                   type="button"
                   whileHover={{
@@ -925,9 +950,7 @@ export default function FlightSearch({ onSearch }) {
 
                     <div className="text-left">
                       <p className="text-sm font-black text-slate-950">
-                        {searching
-                          ? "Searching..."
-                          : "Search Flights"}
+                        {searching ? "Searching..." : "Search Flights"}
                       </p>
 
                       <p className="font-mono text-[9px] font-bold text-slate-900 opacity-80">
@@ -957,7 +980,48 @@ export default function FlightSearch({ onSearch }) {
                 </motion.button>
               </div>
 
-              <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-slate-800 pt-4 font-mono">
+              {/* SEARCH SUMMARY */}
+              <div className="mt-5 grid gap-3 border-t border-slate-800 pt-4 sm:grid-cols-2 lg:grid-cols-4">
+                <InfoItem
+                  label="Departure"
+                  value={`${cityInfo[from].code} · ${from}`}
+                  detail={cityInfo[from].airport}
+                />
+
+                <InfoItem
+                  label="Arrival"
+                  value={`${cityInfo[to].code} · ${to}`}
+                  detail={cityInfo[to].airport}
+                />
+
+                <InfoItem
+                  label="Travelers"
+                  value={`${passengers} ${
+                    passengers === 1 ? "Passenger" : "Passengers"
+                  }`}
+                  detail={travelClass}
+                />
+
+                <InfoItem
+                  label="Journey date"
+                  value={
+                    date
+                      ? new Date(`${date}T00:00:00`).toLocaleDateString(
+                          "en-IN",
+                          {
+                            day: "2-digit",
+                            month: "short",
+                            year: "numeric",
+                          }
+                        )
+                      : "Not selected"
+                  }
+                  detail={date ? "Departure date" : "Choose a date"}
+                />
+              </div>
+
+              {/* SECURITY FOOTER */}
+              <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-slate-800 pt-4 font-mono">
                 <div className="flex items-center gap-2">
                   <ShieldCheck
                     size={14}
@@ -992,6 +1056,7 @@ export default function FlightSearch({ onSearch }) {
           </div>
         </motion.div>
 
+        {/* POPULAR DESTINATIONS */}
         <motion.div
           initial={{
             opacity: 0,
@@ -1004,7 +1069,7 @@ export default function FlightSearch({ onSearch }) {
           transition={{
             delay: 0.8,
           }}
-          className="mt-7"
+          className="mt-7 w-full"
         >
           <div className="mb-3 flex items-center justify-between">
             <div>
@@ -1027,7 +1092,7 @@ export default function FlightSearch({ onSearch }) {
             </div>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-3">
+          <div className="grid w-full gap-4 sm:grid-cols-3">
             <DestinationCard
               city="Dubai"
               code="DXB"
@@ -1070,34 +1135,45 @@ export default function FlightSearch({ onSearch }) {
   );
 }
 
+/* =========================
+   SEARCH FIELD
+========================= */
 
 function SearchField({
   label,
   value,
   subtitle,
+  details,
   icon,
   focused,
   error,
   onClick,
   children,
 }) {
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      onClick?.();
+    }
+  };
+
   return (
-    <motion.button
-      type="button"
+    <motion.div
+      role="button"
+      tabIndex={0}
       whileHover={{
         y: -3,
       }}
       onClick={onClick}
-      className={`group relative min-h-[92px] w-full rounded-2xl border p-4 text-left transition-all duration-300 ${
+      onKeyDown={handleKeyDown}
+      className={`group relative min-h-[108px] w-full cursor-pointer rounded-2xl border p-4 text-left transition-all duration-300 ${
         error
           ? "border-red-400 bg-red-50"
           : focused
-            ? "border-amber-400 bg-blue-300"
+            ? "border-amber-400 bg-amber-50 shadow-lg shadow-amber-500/10"
             : "border-slate-200 bg-white shadow-sm hover:border-amber-400 hover:bg-slate-50"
       }`}
     >
-
-
       <AnimatePresence>
         {focused && (
           <motion.div
@@ -1118,10 +1194,9 @@ function SearchField({
         )}
       </AnimatePresence>
 
-
       <div className="flex items-center gap-2">
         <div
-          className={`flex h-8 w-8 items-center justify-center rounded-lg transition ${
+          className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition ${
             focused
               ? "bg-amber-400 font-bold text-slate-950"
               : "border border-slate-200 bg-slate-100 text-amber-600 shadow-sm"
@@ -1144,14 +1219,20 @@ function SearchField({
         />
       </div>
 
-      <div className="ml-10 mt-1">
+      <div className="ml-10 mt-1 min-w-0">
         <p className="font-mono text-xl font-black tracking-tight text-slate-950">
           {value}
         </p>
 
-        <p className="mt-0.5 text-[11px] font-bold text-black">
+        <p className="truncate text-[11px] font-bold text-black">
           {subtitle}
         </p>
+
+        {details && (
+          <p className="mt-0.5 truncate text-[9px] font-medium text-slate-500">
+            {details}
+          </p>
+        )}
       </div>
 
       {children}
@@ -1176,10 +1257,13 @@ function SearchField({
           </motion.p>
         )}
       </AnimatePresence>
-    </motion.button>
+    </motion.div>
   );
 }
 
+/* =========================
+   CITY DROPDOWN
+========================= */
 
 function CityDropdown({
   cities,
@@ -1208,18 +1292,20 @@ function CityDropdown({
       }}
       className="absolute left-0 right-0 top-full z-[200] mt-2 overflow-hidden rounded-2xl border border-slate-200 bg-slate-700 shadow-[0_25px_70px_rgba(0,0,0,.35)]"
     >
-
       <div className="border-b border-slate-200 bg-slate-50 px-4 py-3">
         <p className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-500">
           Select airport
         </p>
+
+        <p className="mt-1 text-[10px] font-medium text-slate-400">
+          Choose city, airport and terminal
+        </p>
       </div>
 
-      {/* CITY LIST */}
-
-      <div className="max-h-[310px] overflow-y-auto p-2">
+      <div className="max-h-[350px] overflow-y-auto p-2">
         {cities.map((city) => {
           const active = selected === city;
+          const info = cityInfo[city];
 
           return (
             <motion.button
@@ -1235,14 +1321,10 @@ function CityDropdown({
                   : "bg-white text-black hover:bg-slate-100"
               }`}
             >
-              <div className="flex items-center gap-3">
-                {/* slate-900MAP ICON */}
-
+              <div className="flex min-w-0 items-center gap-3">
                 <div
-                  className={`flex h-9 w-9 items-center justify-center rounded-lg ${
-                    active
-                      ? "bg-white/20"
-                      : "bg-slate-100"
+                  className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${
+                    active ? "bg-white/20" : "bg-slate-100"
                   }`}
                 >
                   <MapPin
@@ -1255,37 +1337,53 @@ function CityDropdown({
                   />
                 </div>
 
-                {/* CITY INFORMATION */}
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2">
+                    <p
+                      className={`text-sm font-black ${
+                        active ? "text-white" : "text-black"
+                      }`}
+                    >
+                      {city}
+                    </p>
 
-                <div>
+                    <span
+                      className={`rounded-md px-1.5 py-0.5 font-mono text-[9px] font-black ${
+                        active
+                          ? "bg-white/20 text-white"
+                          : "bg-slate-100 text-slate-700"
+                      }`}
+                    >
+                      {info.code}
+                    </span>
+                  </div>
+
                   <p
-                    className={`text-sm font-black ${
+                    className={`mt-0.5 truncate text-[10px] font-semibold ${
                       active
-                        ? "text-white"
-                        : "text-black"
+                        ? "text-blue-100"
+                        : "text-slate-600"
                     }`}
                   >
-                    {city}
+                    {info.airport}
                   </p>
 
                   <p
-                    className={`font-mono text-[9px] font-bold ${
+                    className={`mt-0.5 font-mono text-[9px] font-bold ${
                       active
                         ? "text-blue-100"
                         : "text-slate-500"
                     }`}
                   >
-                    {cityCodes[city]} · {cityMeta[city]}
+                    {info.country} · Terminal {info.terminal}
                   </p>
                 </div>
               </div>
 
-              {/* SELECTED CHECK */}
-
               {active && (
                 <Check
                   size={17}
-                  className="text-white"
+                  className="ml-2 shrink-0 text-white"
                 />
               )}
             </motion.button>
@@ -1296,11 +1394,15 @@ function CityDropdown({
   );
 }
 
+/* =========================
+   DROPDOWN FIELD
+========================= */
 
 function DropdownField({
   icon,
   label,
   value,
+  detail,
   open,
   onClick,
   children,
@@ -1322,13 +1424,13 @@ function DropdownField({
             : "border-slate-800 bg-slate-950/50 hover:border-amber-500/40 hover:bg-slate-900/80"
         }`}
       >
-        <div className="flex items-center gap-3">
+        <div className="flex min-w-0 items-center gap-3">
           {icon && (
             <motion.div
               animate={{
                 rotate: open ? 8 : 0,
               }}
-              className={`flex h-10 w-10 items-center justify-center rounded-xl border ${
+              className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${
                 open
                   ? "border-amber-300 bg-amber-400 font-bold text-slate-950"
                   : "border-slate-800 bg-slate-900 text-amber-400 shadow-sm"
@@ -1338,14 +1440,20 @@ function DropdownField({
             </motion.div>
           )}
 
-          <div>
+          <div className="min-w-0">
             <p className="font-mono text-[9px] font-black uppercase tracking-wider text-slate-400">
               {label}
             </p>
 
-            <p className="mt-1 font-mono text-sm font-black text-white">
+            <p className="mt-1 truncate font-mono text-sm font-black text-white">
               {value}
             </p>
+
+            {detail && (
+              <p className="mt-0.5 truncate text-[9px] font-medium text-slate-500">
+                {detail}
+              </p>
+            )}
           </div>
         </div>
 
@@ -1365,6 +1473,10 @@ function DropdownField({
     </div>
   );
 }
+
+/* =========================
+   DROPDOWN PANEL
+========================= */
 
 function DropdownPanel({ children }) {
   return (
@@ -1394,6 +1506,9 @@ function DropdownPanel({ children }) {
   );
 }
 
+/* =========================
+   COUNTER BUTTON
+========================= */
 
 function CounterButton({
   children,
@@ -1416,11 +1531,16 @@ function CounterButton({
   );
 }
 
+/* =========================
+   AIRPORT
+========================= */
 
 function Airport({
   code,
   city,
   country,
+  airport,
+  terminal,
   position,
 }) {
   return (
@@ -1440,13 +1560,13 @@ function Airport({
       }`}
     >
       <div
-        className={`flex items-center gap-3 ${
+        className={`flex max-w-[240px] items-center gap-3 ${
           position === "right"
             ? "flex-row-reverse text-right"
             : ""
         }`}
       >
-        <div className="relative flex h-11 w-11 items-center justify-center rounded-2xl border border-amber-500/30 bg-slate-900 shadow-lg backdrop-blur-xl">
+        <div className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-amber-500/30 bg-slate-900 shadow-lg backdrop-blur-xl">
           <motion.div
             className="absolute inset-0 rounded-2xl border border-amber-400"
             animate={{
@@ -1465,13 +1585,21 @@ function Airport({
           />
         </div>
 
-        <div>
+        <div className="min-w-0">
           <p className="font-mono text-xl font-black text-white">
             {code}
           </p>
 
-          <p className="font-mono text-[9px] font-bold text-slate-400">
+          <p className="font-mono text-[9px] font-bold text-slate-300">
             {city} · {country}
+          </p>
+
+          <p className="truncate font-mono text-[8px] font-medium text-slate-500">
+            {airport}
+          </p>
+
+          <p className="font-mono text-[8px] font-bold text-amber-400/80">
+            Terminal {terminal}
           </p>
         </div>
       </div>
@@ -1479,6 +1607,9 @@ function Airport({
   );
 }
 
+/* =========================
+   BENEFIT
+========================= */
 
 function Benefit({
   icon,
@@ -1502,6 +1633,35 @@ function Benefit({
   );
 }
 
+/* =========================
+   INFO ITEM
+========================= */
+
+function InfoItem({
+  label,
+  value,
+  detail,
+}) {
+  return (
+    <div className="rounded-xl border border-slate-800 bg-slate-950/50 px-3 py-2.5">
+      <p className="font-mono text-[8px] font-black uppercase tracking-[0.16em] text-slate-500">
+        {label}
+      </p>
+
+      <p className="mt-1 truncate font-mono text-xs font-black text-amber-300">
+        {value}
+      </p>
+
+      <p className="mt-0.5 truncate text-[9px] font-medium text-slate-500">
+        {detail}
+      </p>
+    </div>
+  );
+}
+
+/* =========================
+   DESTINATION CARD
+========================= */
 
 function DestinationCard({
   city,
@@ -1530,7 +1690,6 @@ function DestinationCard({
       }}
       className={`group relative overflow-hidden rounded-3xl border border-slate-800 bg-slate-900/90 p-5 shadow-2xl backdrop-blur-xl transition-all duration-300 ${accentColor}`}
     >
-
       <div
         className="absolute inset-0 bg-cover bg-center opacity-20 transition-transform duration-700 group-hover:scale-110"
         style={{
@@ -1538,14 +1697,11 @@ function DestinationCard({
         }}
       />
 
-
       <div
         className={`absolute inset-0 bg-gradient-to-tr ${gradient} opacity-40 transition-opacity duration-500 group-hover:opacity-80`}
       />
 
-
       <div className="absolute inset-0 bg-gradient-to-b from-slate-950/60 via-slate-950/80 to-slate-950" />
-
 
       <div className="relative z-10 flex h-40 flex-col justify-between">
         <div className="flex items-start justify-between">
@@ -1574,7 +1730,6 @@ function DestinationCard({
             </span>
           </div>
         </div>
-
 
         <div className="mt-2 flex items-center justify-between border-t border-slate-800/80 pt-3">
           <div>
