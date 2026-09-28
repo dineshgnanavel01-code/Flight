@@ -24,37 +24,49 @@ export default function App() {
     return () => clearTimeout(timer);
   }, []);
 
-  const navigate = (nextPage) => setPage(nextPage);
+  const scrollToSection = (id) => {
+    requestAnimationFrame(() => {
+      document.getElementById(id)?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    });
+  };
+
+  const navigate = (nextPage) => {
+    setPage(nextPage);
+    scrollToSection(nextPage);
+  };
 
   const handleSearch = () => {
     setSearched(true);
     setPage("results");
-    setTimeout(() => document.getElementById("results")?.scrollIntoView({ behavior: "smooth" }), 50);
+    scrollToSection("results");
   };
 
   const handleDetails = (flight) => {
     setSelectedFlight(flight);
     setPage("details");
-    setTimeout(() => document.getElementById("details")?.scrollIntoView({ behavior: "smooth" }), 50);
+    scrollToSection("details");
   };
 
   const handlePassenger = (data) => {
     setPassenger(data);
     setPage("seats");
-    setTimeout(() => document.getElementById("seats")?.scrollIntoView({ behavior: "smooth" }), 50);
+    scrollToSection("seats");
   };
 
   const handleSeat = (selectedSeat) => {
     setSeat(selectedSeat);
     setPage("payment");
-    setTimeout(() => document.getElementById("payment")?.scrollIntoView({ behavior: "smooth" }), 50);
+    scrollToSection("payment");
   };
 
   const handlePayment = (data) => {
     setPayment(data);
     setConfirmed(true);
     setPage("confirmation");
-    setTimeout(() => document.getElementById("confirmation")?.scrollIntoView({ behavior: "smooth" }), 50);
+    scrollToSection("confirmation");
   };
 
   const handleNewBooking = () => {
@@ -65,14 +77,20 @@ export default function App() {
     setPayment(null);
     setConfirmed(false);
     setPage("search");
-    setTimeout(() => document.getElementById("search")?.scrollIntoView({ behavior: "smooth" }), 50);
+    scrollToSection("search");
   };
 
   if (loading) return <LoadingScreen />;
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-slate-950 text-white">
-      <Navbar page={page} selectedFlight={selectedFlight} searched={searched} confirmed={confirmed} onNavigate={navigate} />
+      <Navbar
+        page={page}
+        selectedFlight={selectedFlight}
+        searched={searched}
+        confirmed={confirmed}
+        onNavigate={navigate}
+      />
 
       <main className="pt-[72px]">
         <section id="search" className="scroll-mt-24">
@@ -88,24 +106,60 @@ export default function App() {
         {selectedFlight && (
           <>
             <section id="details" className="scroll-mt-24">
-              <FlightDetails flight={selectedFlight} onClose={() => document.getElementById("results")?.scrollIntoView({ behavior: "smooth" })} onContinue={() => { setPage("passenger"); document.getElementById("passenger")?.scrollIntoView({ behavior: "smooth" }); }} />
+              <FlightDetails
+                flight={selectedFlight}
+                onClose={() => {
+                  setPage("results");
+                  scrollToSection("results");
+                }}
+                onContinue={() => {
+                  setPage("passenger");
+                  scrollToSection("passenger");
+                }}
+              />
             </section>
 
             <section id="passenger" className="scroll-mt-24">
-              <PassengerDetails flight={selectedFlight} onContinue={handlePassenger} onBack={() => document.getElementById("details")?.scrollIntoView({ behavior: "smooth" })} />
+              <PassengerDetails
+                flight={selectedFlight}
+                onContinue={handlePassenger}
+                onBack={() => {
+                  setPage("details");
+                  scrollToSection("details");
+                }}
+              />
             </section>
 
             <section id="seats" className="scroll-mt-24">
-              <SeatSelection flight={selectedFlight} passenger={passenger} onContinue={handleSeat} onBack={() => document.getElementById("passenger")?.scrollIntoView({ behavior: "smooth" })} />
+              <SeatSelection
+                flight={selectedFlight}
+                passenger={passenger}
+                onContinue={handleSeat}
+                onBack={() => {
+                  setPage("passenger");
+                  scrollToSection("passenger");
+                }}
+              />
             </section>
 
             <section id="payment" className="scroll-mt-24">
-              <Payment flight={selectedFlight} passenger={passenger} seat={seat} onPayment={handlePayment} />
+              <Payment
+                flight={selectedFlight}
+                passenger={passenger}
+                seat={seat}
+                onPayment={handlePayment}
+              />
             </section>
 
             {confirmed && (
               <section id="confirmation" className="scroll-mt-24">
-                <BookingConfirmation flight={selectedFlight} passenger={passenger} seat={seat} payment={payment} onNewBooking={handleNewBooking} />
+                <BookingConfirmation
+                  flight={selectedFlight}
+                  passenger={passenger}
+                  seat={seat}
+                  payment={payment}
+                  onNewBooking={handleNewBooking}
+                />
               </section>
             )}
           </>
