@@ -1,20 +1,6 @@
 
 import { AnimatePresence, motion } from "framer-motion";
-import {
-  ArrowRight,
-  BadgeCheck,
-  BriefcaseBusiness,
-  CalendarDays,
-  CheckCircle2,
-  Clock3,
-  Coffee,
-  CreditCard,
-  Luggage,
-  Plane,
-  ShieldCheck,
-  Sparkles,
-  X,
-} from "lucide-react";
+import { ArrowRight,BadgeCheck,BriefcaseBusiness,CalendarDays,CheckCircle2, Clock3, Coffee, CreditCard, Luggage,Plane, ShieldCheck, Sparkles,X,} from "lucide-react";
 
 export default function FlightDetails({
   flight,
@@ -31,7 +17,6 @@ export default function FlightDetails({
     <AnimatePresence>
       {flight && (
         <>
-          {/* Backdrop */}
           <motion.div
             className="fixed inset-0 z-[90] bg-slate-950/40 backdrop-blur-md"
             initial={{ opacity: 0 }}
@@ -41,7 +26,6 @@ export default function FlightDetails({
             onClick={onClose}
           />
 
-          {/* Flight Details Panel */}
           <motion.aside
             initial={{ x: "100%", opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
@@ -59,7 +43,6 @@ export default function FlightDetails({
               shadow-[-30px_0_100px_rgba(15,23,42,0.22)]
             "
           >
-            {/* Background Effects */}
             <div className="pointer-events-none absolute inset-0 overflow-hidden">
               <motion.div
                 className="absolute -right-32 -top-32 h-96 w-96 rounded-full bg-amber-400/20 blur-[100px]"
@@ -85,7 +68,6 @@ export default function FlightDetails({
               />
             </div>
 
-            {/* Header */}
             <header className="relative z-20 flex shrink-0 items-center justify-between border-b border-slate-200/80 bg-white/85 px-5 py-4 backdrop-blur-xl sm:px-7">
               <div className="flex items-center gap-3">
                 <motion.div
@@ -130,11 +112,6 @@ export default function FlightDetails({
               </motion.button>
             </header>
 
-            {/* =====================================================
-                SCROLLABLE CONTENT
-                - scrollbar hidden
-                - smooth scrolling
-            ====================================================== */}
             <div
               className="
                 relative z-10 flex-1
@@ -150,7 +127,6 @@ export default function FlightDetails({
                 WebkitOverflowScrolling: "touch",
               }}
             >
-              {/* Chrome / Edge / Safari scrollbar removal */}
               <style>
                 {`
                   .flight-details-scroll::-webkit-scrollbar {
@@ -162,7 +138,6 @@ export default function FlightDetails({
               </style>
 
               <div className="flight-details-scroll">
-                {/* Selected Flight */}
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -191,7 +166,6 @@ export default function FlightDetails({
                   </div>
                 </motion.div>
 
-                {/* Airline Card */}
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -230,7 +204,6 @@ export default function FlightDetails({
                   </div>
                 </motion.div>
 
-                {/* Journey Card */}
                 <motion.div
                   initial={{
                     opacity: 0,
@@ -248,7 +221,6 @@ export default function FlightDetails({
                   <div className="h-2 bg-gradient-to-r from-amber-400 via-orange-500 to-amber-600" />
 
                   <div className="p-5 sm:p-7">
-                    {/* Route Header */}
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">
@@ -279,9 +251,7 @@ export default function FlightDetails({
                       </div>
                     </div>
 
-                    {/* Time Line */}
                     <div className="mt-7 grid grid-cols-[1fr_auto_1fr] items-center gap-4">
-                      {/* Departure */}
                       <div>
                         <motion.p
                           initial={{ opacity: 0, x: -15 }}
@@ -347,7 +317,6 @@ export default function FlightDetails({
                         </div>
                       </div>
 
-                      {/* Arrival */}
                       <div className="text-right">
                         <motion.p
                           initial={{ opacity: 0, x: 15 }}
@@ -367,13 +336,11 @@ export default function FlightDetails({
                       </div>
                     </div>
 
-                    {/* Divider */}
                     <div className="relative my-7 border-t border-dashed border-slate-200">
                       <span className="absolute -left-8 -top-3 hidden h-6 w-6 rounded-full bg-[#fafaf9] sm:block" />
                       <span className="absolute -right-8 -top-3 hidden h-6 w-6 rounded-full bg-[#fafaf9] sm:block" />
                     </div>
 
-                    {/* Info */}
                     <div className="grid gap-3 sm:grid-cols-3">
                       <InfoMini
                         icon={<CalendarDays size={15} />}
@@ -402,7 +369,7 @@ export default function FlightDetails({
                   </div>
                 </motion.div>
 
-                {/* Premium Notice */}
+              
                 <motion.div
                   initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -425,7 +392,7 @@ export default function FlightDetails({
                   </div>
                 </motion.div>
 
-                {/* Amenities */}
+                
                 <motion.div
                   initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -476,7 +443,6 @@ export default function FlightDetails({
                   </div>
                 </motion.div>
 
-                {/* Total Fare */}
                 <motion.div
                   initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -525,9 +491,7 @@ export default function FlightDetails({
               </div>
             </div>
 
-            {/* =====================================================
-                FOOTER
-            ====================================================== */}
+          
             <div className="relative z-30 shrink-0 border-t border-slate-200 bg-white/95 p-4 backdrop-blur-xl sm:p-5">
               <div className="mx-auto flex max-w-full items-center gap-3">
                 <div className="hidden flex-1 sm:block">
@@ -590,9 +554,6 @@ export default function FlightDetails({
   );
 }
 
-/* =============================================================
-   FEATURE
-============================================================= */
 
 function Feature({ icon, title, value }) {
   return (
@@ -627,9 +588,7 @@ function Feature({ icon, title, value }) {
   );
 }
 
-/* =============================================================
-   INFO MINI
-============================================================= */
+
 
 function InfoMini({ icon, label, value }) {
   return (
